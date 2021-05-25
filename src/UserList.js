@@ -5,10 +5,10 @@ function SelectUser({ users, currentUser, setCurrentUser }) {
     const newUser = users.filter(
       (user) => user.name === event.target.innerHTML
     );
-
     console.log("CurrentUser=", newUser);
     setCurrentUser(newUser);
   }
+
   return (
     <ul className="user-list">
       {users.map((user) => (

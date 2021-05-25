@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 import AlbumList from "./AlbumList";
@@ -8,10 +8,14 @@ function App() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const [appTitle, setAppTitle] = useState("Awsome Album App");
-  const updateTitle = useMemo(
-    () => setAppTitle(`${currentUser} Albums`),
-    [currentUser]
-  );
+
+  //change title
+  useEffect(() => {
+    if (currentUser.length > 0) {
+      const userName = currentUser[0].name;
+      setAppTitle(`${userName} Albums`);
+    }
+  }, [currentUser]);
 
   //get users
   useEffect(() => {
@@ -50,7 +54,7 @@ function App() {
           <p>{appTitle}</p>
         </div>
         <div>
-          <AlbumList user={currentUser} updateTitle={updateTitle} />
+          <AlbumList currentUser={currentUser} appTitle={appTitle} />
         </div>
       </div>
     </div>

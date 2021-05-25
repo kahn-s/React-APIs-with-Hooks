@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
 
-function AlbumList({ user, updateTitle }) {
+function AlbumList({ currentUser, appTitle }) {
   const [albumList, setAlbumList] = useState([]);
 
   useEffect(() => {
     const abortController = new AbortController();
-    async function getUserAlbums({ user } = {}) {
+    async function getUserAlbums() {
       try {
-        const userId = { user }.id;
-        console.log("userId = ", userId);
-        const response = await fetch(
-          `https://jsonplaceholder.typicode.com/albums?userId=${userId}`,
-          { signal: abortController.signal }
-        );
+        if (currentUser.length > 0) {
+          const user = currentUser[0];
+          console.log("userId = ", user.id);
+          const response = await fetch(
+            `https://jsonplaceholder.typicode.com/albums?userId=${user.id}`,
+            { signal: abortController.signal }
+          );
+          const userAlbumList = await response.json();
+          setAlbumList(userAlbumList);
 
-        setAlbumList(await response.data);
-        console.log({ albumList });
+          console.log(userAlbumList);
+        }
       } catch (error) {
         if (error.name === "AbortError") {
           console.log("aborted");
@@ -24,19 +27,20 @@ function AlbumList({ user, updateTitle }) {
         }
       }
     }
-    getUserAlbums({ user });
-    return () => abortController.abort();
-  }, [albumList, user]);
 
-  if ({ albumList }.length > 0) {
+    getUserAlbums(currentUser);
+    return () => abortController.abort();
+  }, [currentUser]);
+
+  if (albumList.length > 0) {
     return (
       <div>
-        <p>{updateTitle()}</p>
+        <p>{appTitle}</p>
         <ul className="album list">
           {albumList.map((album) => (
-            <li key={album.index}>
-              {album.index}
-              {album.name}
+            <li key={album.id}>
+              <p>{album.id}</p>
+              <p>{album.title}</p>
             </li>
           ))}
         </ul>
